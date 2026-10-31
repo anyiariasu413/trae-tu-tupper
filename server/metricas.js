@@ -103,7 +103,8 @@ export function metricasCafeterias(db, cafeIds, dias = 30) {
     id: r.id,
     fecha: r.fecha,
     cafeteria: nombreCafe[r.cafeteriaId],
-    cliente: enmascarar(usuarios[r.clienteId]?.carnet),
+    cliente: usuarios[r.clienteId]?.nombre || 'Cliente',
+    carnet: usuarios[r.clienteId]?.carnet || '',
     descuento: r.descuento,
     numeroReutilizacion: r.numeroReutilizacion,
   }));

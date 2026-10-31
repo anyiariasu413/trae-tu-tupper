@@ -7,7 +7,7 @@ import { RUTA_INICIO } from '../util.js';
 export default function Registro() {
   const { usuario, registrarse } = useAuth();
   const navegar = useNavigate();
-  const [f, setF] = useState({ nombre: '', carnet: '', email: '', password: '', confirmar: '', tipoCliente: 'estudiante' });
+  const [f, setF] = useState({ nombre: '', carnet: '', email: '', password: '', confirmar: '' });
   const [error, setError] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
@@ -20,7 +20,7 @@ export default function Registro() {
     if (f.password !== f.confirmar) return setError('Las contraseñas no coinciden.');
     setEnviando(true);
     try {
-      await registrarse({ nombre: f.nombre, carnet: f.carnet, email: f.email, password: f.password, tipoCliente: f.tipoCliente });
+      await registrarse({ nombre: f.nombre, carnet: f.carnet, email: f.email, password: f.password });
       navegar('/cliente', { replace: true, state: { nuevo: true } });
     } catch (err) {
       setError(err.message);
@@ -32,7 +32,7 @@ export default function Registro() {
   return (
     <div className="auth">
       <div className="auth-caja">
-        <Link to="/" className="marca"><Logo /><div><strong>Trae tu Tupper</strong><span>Universidad Don Bosco</span></div></Link>
+        <Link to="/" className="marca"><Logo tamano={56} /><div><strong>Trae tu Tupper</strong><span>Universidad Don Bosco</span></div></Link>
         <form className="panel" onSubmit={enviar} noValidate>
           <h1 style={{ fontSize: '1.5rem' }}>Crear tu cuenta</h1>
           <p className="texto-suave pequeno">Al terminar tendrás tu carné virtual listo para usar en cualquier chalet.</p>
@@ -50,14 +50,7 @@ export default function Registro() {
             <label htmlFor="email">Correo institucional</label>
             <input id="email" type="email" className="input" autoComplete="email" value={f.email} onChange={set('email')} placeholder="tucarne@alumno.udb.edu.sv" required />
           </div>
-          <div className="campo">
-            <label htmlFor="tipo">Soy</label>
-            <select id="tipo" className="input" value={f.tipoCliente} onChange={set('tipoCliente')}>
-              <option value="estudiante">Estudiante</option>
-              <option value="docente">Docente</option>
-              <option value="administrativo">Personal administrativo</option>
-            </select>
-          </div>
+
           <div className="campo">
             <label htmlFor="pass">Contraseña</label>
             <input id="pass" type="password" className="input" autoComplete="new-password" value={f.password} onChange={set('password')} required />

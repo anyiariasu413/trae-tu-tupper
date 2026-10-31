@@ -4,10 +4,11 @@ import {
 
 export const COLORES = {
   hoja: '#16804F',
-  tapa: '#2350C8',
+  tapa: '#21448E',
+  sol: '#E0B700',
   gris: '#C9D1DD',
   ambar: '#C27C0E',
-  serie: ['#2350C8', '#16804F', '#C27C0E', '#7A4FC2', '#0E8A9A'],
+  serie: ['#21448E', '#16804F', '#E0B700', '#7A4FC2', '#0E8A9A'],
 };
 
 const eje = { tick: { fill: '#6B7588', fontSize: 12 }, axisLine: false, tickLine: false };

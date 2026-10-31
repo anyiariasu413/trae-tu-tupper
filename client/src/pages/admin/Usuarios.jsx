@@ -17,6 +17,7 @@ export default function Usuarios() {
   const { datos, error, recargar } = useDatos(ruta);
   const { datos: cafeterias } = useDatos('/cafeterias');
   const [creando, setCreando] = useState(false);
+  const [editando, setEditando] = useState(null);
   const [toast, avisar] = useToast();
 
   const cambiarEstado = async (u, activo) => {
@@ -58,6 +59,7 @@ export default function Usuarios() {
                   <th>Nombre</th>
                   {filtro === 'cliente' ? <><th>Carné</th><th>Tipo</th><th className="num">Usos</th><th>Desde</th></> : <><th>Rol</th><th>Cafetería</th></>}
                   <th>Estado</th>
+                  <th><span className="sr">Acciones</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -70,6 +72,7 @@ export default function Usuarios() {
                       <><td>{ROL_NOMBRE[u.rol]}</td><td>{nombreCafe[u.cafeteriaId] || '—'}</td></>
                     )}
                     <td>{u.rol === 'admin' ? <span className="chip chip-tapa">Activo</span> : <Interruptor checked={u.activo} onChange={(v) => cambiarEstado(u, v)}><span className="sr">Activo</span></Interruptor>}</td>
+                    <td><button className="btn btn-texto" onClick={() => setEditando(u)}>Editar</button></td>
                   </tr>
                 ))}
               </tbody>
@@ -81,6 +84,10 @@ export default function Usuarios() {
       {creando && cafeterias && (
         <FormUsuario cafeterias={cafeterias} onCerrar={() => setCreando(false)}
           onCreado={(u) => { setCreando(false); avisar(`${u.nombre} ya puede iniciar sesión`); recargar(); }} />
+      )}
+      {editando && cafeterias && (
+        <FormUsuario cafeterias={cafeterias} inicial={editando} onCerrar={() => setEditando(null)}
+          onGuardado={(u) => { setEditando(null); avisar(`Cambios de ${u.nombre} guardados`); recargar(); }} />
       )}
       {toast}
     </>

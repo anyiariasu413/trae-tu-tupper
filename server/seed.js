@@ -2,14 +2,14 @@
 // Los datos se generan relativos a la fecha actual, así los paneles
 // siempre muestran actividad reciente (últimas 8 semanas + el día de hoy).
 import bcrypt from 'bcryptjs';
-import { CONFIG, CO2E_POR_ENVASE, diaSV, horaSV, instanteSV, sumarDias, diaSemana, redondear } from './config.js';
+import { CONFIG, co2ePorEnvase, diaSV, horaSV, instanteSV, sumarDias, diaSemana, redondear } from './config.js';
 import { calcularDescuento, requiereMonto } from './reglas.js';
 
 export const CREDENCIALES_DEMO = {
   admin: { email: 'admin@udb.edu.sv', password: 'Admin2026!' },
-  duena: { email: 'duena.central@udb.edu.sv', password: 'Duena2026!' },
-  empleado: { email: 'empleado.central@udb.edu.sv', password: 'Empleado2026!' },
-  cliente: { email: 'hm250117@alumno.udb.edu.sv', carnet: 'HM250117', password: 'Cliente2026!' },
+  duena: { email: 'duena.dliss@udb.edu.sv', password: 'Duena2026!' },
+  empleado: { email: 'empleado.dliss@udb.edu.sv', password: 'Empleado2026!' },
+  cliente: { email: 'ap250201@alumno.udb.edu.sv', carnet: 'AP250201', password: 'Cliente2026!' },
 };
 
 function mulberry32(a) {
@@ -30,6 +30,15 @@ const sinTildes = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
 const PESOS_HORA = { 7: 6, 8: 8, 9: 5, 10: 4, 11: 10, 12: 22, 13: 20, 14: 9, 15: 6, 16: 4 };
 const SUMA_PESOS = Object.values(PESOS_HORA).reduce((a, b) => a + b, 0);
 
+// Equipo del proyecto: aparecen como clientes con historial de uso
+const EQUIPO = [
+  { nombre: 'Adriana Alejandra Aguilar Peraza', carnet: 'AP250201', usos: 31, favorita: 'caf-dliss' },
+  { nombre: 'Karla Angie Arias Pérez', carnet: 'AP260403', usos: 26, favorita: 'caf-luna' },
+  { nombre: 'Gerardo Andrés Cruz Aguirre', carnet: 'CA250809', usos: 22, favorita: 'caf-dliss' },
+  { nombre: 'Emily Camila Najarro Escamilla', carnet: 'NE250271', usos: 18, favorita: 'caf-cafeteria' },
+  { nombre: 'Gabriela Judith Morán Vega', carnet: 'MV250156', usos: 14, favorita: 'caf-luna' },
+];
+
 export function generarDatos(ahora = new Date()) {
   const rnd = mulberry32(20231101);
   const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
@@ -46,38 +55,41 @@ export function generarDatos(ahora = new Date()) {
   const hashCliente = bcrypt.hashSync(CREDENCIALES_DEMO.cliente.password, 10);
 
   const cafeterias = [
-    { id: 'caf-central', nombre: 'Chalet Central', ubicacion: 'Plaza central del campus', activa: true, creadoEn: creadoBase,
+    { id: 'caf-dliss', nombre: "Cafetería D'Liss", ubicacion: 'CITT, frente al Edificio 6', activa: true, creadoEn: creadoBase,
       regla: { tipo: 'porcentaje', valor: 10, montoMinimo: 2, topeDiario: 2, activo: true, actualizadoEn: creadoBase } },
-    { id: 'caf-ingenieria', nombre: 'Chalet de Ingeniería', ubicacion: 'Junto al edificio de Ingeniería', activa: true, creadoEn: creadoBase,
+    { id: 'caf-luna', nombre: 'Cafetería Luna&', ubicacion: 'Frente al Edificio C', activa: true, creadoEn: creadoBase,
       regla: { tipo: 'fijo', valor: 0.25, montoMinimo: 0, topeDiario: 3, activo: true, actualizadoEn: creadoBase } },
-    { id: 'caf-ciencias', nombre: 'Chalet de Ciencias', ubicacion: 'Edificio de Ciencias y Humanidades', activa: true, creadoEn: creadoBase,
+    { id: 'caf-cafeteria', nombre: 'Cafetería', ubicacion: 'Frente al Edificio C, a la izquierda de Cafetería Luna&', activa: true, creadoEn: creadoBase,
       regla: { tipo: 'porcentaje', valor: 15, montoMinimo: 3, topeDiario: 1, activo: true, actualizadoEn: creadoBase } },
   ];
 
   const usuarios = [
     { id: 'u-admin', nombre: 'Administración UDB', email: CREDENCIALES_DEMO.admin.email, rol: 'admin', cafeteriaId: null, passwordHash: hashAdmin, activo: true, creadoEn: creadoBase },
-    { id: 'u-duena-central', nombre: 'Rosa Elena Méndez', email: 'duena.central@udb.edu.sv', rol: 'duena', cafeteriaId: 'caf-central', passwordHash: hashDuena, activo: true, creadoEn: creadoBase },
-    { id: 'u-duena-ingenieria', nombre: 'Marta Alicia Rivas', email: 'duena.ingenieria@udb.edu.sv', rol: 'duena', cafeteriaId: 'caf-ingenieria', passwordHash: hashDuena, activo: true, creadoEn: creadoBase },
-    { id: 'u-duena-ciencias', nombre: 'Gloria Beatriz Santos', email: 'duena.ciencias@udb.edu.sv', rol: 'duena', cafeteriaId: 'caf-ciencias', passwordHash: hashDuena, activo: true, creadoEn: creadoBase },
-    { id: 'u-emp-central-1', nombre: 'Jorge Alberto Peña', email: 'empleado.central@udb.edu.sv', rol: 'empleado', cafeteriaId: 'caf-central', passwordHash: hashEmpleado, activo: true, creadoEn: creadoBase },
-    { id: 'u-emp-central-2', nombre: 'Karen Lissette Ortiz', email: 'empleado2.central@udb.edu.sv', rol: 'empleado', cafeteriaId: 'caf-central', passwordHash: hashEmpleado, activo: true, creadoEn: creadoBase },
-    { id: 'u-emp-ingenieria', nombre: 'Samuel Antonio Cruz', email: 'empleado.ingenieria@udb.edu.sv', rol: 'empleado', cafeteriaId: 'caf-ingenieria', passwordHash: hashEmpleado, activo: true, creadoEn: creadoBase },
-    { id: 'u-emp-ciencias', nombre: 'Iris Yamileth Duarte', email: 'empleado.ciencias@udb.edu.sv', rol: 'empleado', cafeteriaId: 'caf-ciencias', passwordHash: hashEmpleado, activo: true, creadoEn: creadoBase },
+    { id: 'u-duena-dliss', nombre: 'Rosa Elena Méndez', email: 'duena.dliss@udb.edu.sv', rol: 'duena', cafeteriaId: 'caf-dliss', passwordHash: hashDuena, activo: true, creadoEn: creadoBase },
+    { id: 'u-duena-luna', nombre: 'Marta Alicia Rivas', email: 'duena.luna@udb.edu.sv', rol: 'duena', cafeteriaId: 'caf-luna', passwordHash: hashDuena, activo: true, creadoEn: creadoBase },
+    { id: 'u-duena-cafeteria', nombre: 'Gloria Beatriz Santos', email: 'duena.cafeteria@udb.edu.sv', rol: 'duena', cafeteriaId: 'caf-cafeteria', passwordHash: hashDuena, activo: true, creadoEn: creadoBase },
+    { id: 'u-emp-dliss-1', nombre: 'Jorge Alberto Peña', email: 'empleado.dliss@udb.edu.sv', rol: 'empleado', cafeteriaId: 'caf-dliss', passwordHash: hashEmpleado, activo: true, creadoEn: creadoBase },
+    { id: 'u-emp-dliss-2', nombre: 'Karen Lissette Ortiz', email: 'empleado2.dliss@udb.edu.sv', rol: 'empleado', cafeteriaId: 'caf-dliss', passwordHash: hashEmpleado, activo: true, creadoEn: creadoBase },
+    { id: 'u-emp-luna', nombre: 'Samuel Antonio Cruz', email: 'empleado.luna@udb.edu.sv', rol: 'empleado', cafeteriaId: 'caf-luna', passwordHash: hashEmpleado, activo: true, creadoEn: creadoBase },
+    { id: 'u-emp-cafeteria', nombre: 'Iris Yamileth Duarte', email: 'empleado.cafeteria@udb.edu.sv', rol: 'empleado', cafeteriaId: 'caf-cafeteria', passwordHash: hashEmpleado, activo: true, creadoEn: creadoBase },
   ];
   const empleadosPorCafe = {};
   for (const u of usuarios) if (u.rol === 'empleado') (empleadosPorCafe[u.cafeteriaId] ||= []).push(u.id);
 
   // ---- Clientes ----
   const clientes = [];
-  const carnets = new Set([CREDENCIALES_DEMO.cliente.carnet]);
+  const carnets = new Set(EQUIPO.map((e) => e.carnet));
   const cafeIds = cafeterias.map((c) => c.id);
 
-  const demo = {
-    id: 'u-cliente-demo', nombre: 'Sofía Hernández Mejía', email: CREDENCIALES_DEMO.cliente.email,
-    carnet: CREDENCIALES_DEMO.cliente.carnet, tipoCliente: 'estudiante', rol: 'cliente', cafeteriaId: null,
-    passwordHash: hashCliente, activo: true, creadoEn: instanteSV(inicio, 9).toISOString(),
-  };
-  usuarios.push(demo);
+  const equipo = EQUIPO.map((e, i) => {
+    const u = {
+      id: `u-equipo-${i + 1}`, nombre: e.nombre, email: `${e.carnet.toLowerCase()}@alumno.udb.edu.sv`,
+      carnet: e.carnet, tipoCliente: 'estudiante', rol: 'cliente', cafeteriaId: null,
+      passwordHash: hashCliente, activo: true, creadoEn: instanteSV(inicio, 9 + i).toISOString(),
+    };
+    usuarios.push(u);
+    return { u, usos: e.usos, favorita: e.favorita };
+  });
 
   for (let i = 0; i < 600; i++) {
     const nombre = pick(NOMBRES);
@@ -111,7 +123,7 @@ export function generarDatos(ahora = new Date()) {
   // ---- Registros de reutilización ----
   const registros = [];
   const ventasSinTupper = [];
-  const BASE = { 'caf-central': 250, 'caf-ingenieria': 175, 'caf-ciencias': 135 };
+  const BASE = { 'caf-dliss': 250, 'caf-luna': 175, 'caf-cafeteria': 135 };
   const ahoraMs = ahora.getTime();
   let seq = 0;
 
@@ -131,7 +143,7 @@ export function generarDatos(ahora = new Date()) {
       empleadoId: pick(empleadosPorCafe[cafe.id]), fecha: fecha.toISOString(),
       monto, descuento: calc.descuento, total: calc.total, motivoSinDescuento: calc.motivo,
       tipoDescuento: cafe.regla.tipo, valorDescuento: cafe.regla.valor,
-      gramosEvitados: CONFIG.GRAMOS_POR_ENVASE, co2eKg: redondear(CO2E_POR_ENVASE, 5),
+      gramosEvitados: CONFIG.GRAMOS_POR_ENVASE, co2eKg: redondear(co2ePorEnvase(), 5),
     };
   };
 
@@ -141,11 +153,17 @@ export function generarDatos(ahora = new Date()) {
   for (const [h, p] of Object.entries(PESOS_HORA)) if (Number(h) < horaActual) pesoTranscurrido += p;
   const fraccionHoy = pesoTranscurrido / SUMA_PESOS;
 
-  // Días específicos del cliente demo: 31 usos repartidos en las 8 semanas
+  // Días de uso de cada integrante del equipo, repartidos en las 8 semanas
   const diasHabiles = [];
   for (let d = 0; d <= DIAS; d++) { const dia = sumarDias(inicio, d); const ds = diaSemana(dia); if (ds >= 1 && ds <= 5 && dia !== hoy) diasHabiles.push(dia); }
-  const diasDemo = new Set();
-  while (diasDemo.size < Math.min(31, diasHabiles.length)) diasDemo.add(diasHabiles[Math.floor(rnd() * diasHabiles.length)]);
+  for (const m of equipo) {
+    m.dias = new Map();
+    while (m.dias.size < Math.min(m.usos, diasHabiles.length)) {
+      const dia = diasHabiles[Math.floor(rnd() * diasHabiles.length)];
+      // 3 de cada 4 usos en su cafetería favorita
+      m.dias.set(dia, rnd() < 0.75 ? m.favorita : pick(cafeIds));
+    }
+  }
 
   for (let d = 0; d <= DIAS; d++) {
     const dia = sumarDias(inicio, d);
@@ -159,7 +177,7 @@ export function generarDatos(ahora = new Date()) {
 
     for (const cafe of cafeterias) {
       const ventas = Math.round(BASE[cafe.id] * factorDia * entre(0.85, 1.12) * factorHoy);
-      const extra = cafe.id === 'caf-ingenieria' ? 0.025 : cafe.id === 'caf-ciencias' ? -0.01 : 0;
+      const extra = cafe.id === 'caf-luna' ? 0.025 : cafe.id === 'caf-cafeteria' ? -0.01 : 0;
       const proporcion = Math.max(0.02, 0.06 + 0.14 * progreso + extra + entre(-0.02, 0.02));
       let conTupper = Math.round(ventas * proporcion);
 
@@ -167,9 +185,10 @@ export function generarDatos(ahora = new Date()) {
       const usadosHoy = new Set();
       const usosHoyPorCliente = {};
 
-      if (cafe.id === 'caf-central' && diasDemo.has(dia)) {
-        const reg = crearRegistro(demo, cafe, dia, 0);
-        if (reg) { registros.push(reg); usadosHoy.add(demo.id); conTupper--; }
+      for (const m of equipo) {
+        if (m.dias.get(dia) !== cafe.id) continue;
+        const reg = crearRegistro(m.u, cafe, dia, 0);
+        if (reg) { registros.push(reg); usadosHoy.add(m.u.id); conTupper--; }
       }
 
       let intentos = 0;

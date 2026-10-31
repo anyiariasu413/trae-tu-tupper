@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+          <circle cx="210" cy="140" r="120" fill="#FFF7CC"/>
+          <!-- brotes de fondo -->
+          <g transform="translate(-30 0)"><path d="M60 205 C58 180 66 165 80 158" stroke="#16804F" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M80 158 C92 150 104 152 110 160 C98 168 88 166 80 158Z" fill="#3FA572"/>
+          <path d="M66 178 C56 168 44 168 38 174 C46 184 58 184 66 178Z" fill="#16804F"/></g>
+          <!-- mostrador -->
+          <rect x="16" y="214" width="368" height="72" rx="6" fill="#21448E"/>
+          <rect x="10" y="204" width="380" height="16" rx="5" fill="#172F66"/>
+          <rect x="16" y="246" width="368" height="8" fill="#FFDF00"/>
+          <!-- tupper -->
+          <rect x="44" y="118" width="16" height="90" rx="6" fill="#21448E" transform="rotate(-10 52 208)"/><rect x="40" y="150" width="6" height="22" rx="2" fill="#172F66" transform="rotate(-10 52 208)"/>
+          <!-- cuerpo transparente con la comida adentro -->
+          <path d="M84 162 H182 V197 Q182 206 173 206 H93 Q84 206 84 197 Z" fill="#EAF6EF" stroke="#16804F" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="92" y="186" width="44" height="13" rx="6.5" fill="#E8C48A"/>
+          <rect x="96" y="176" width="40" height="12" rx="6" fill="#DDB273"/>
+          <circle cx="106" cy="181" r="1.8" fill="#9C6B35"/><circle cx="122" cy="183" r="1.6" fill="#9C6B35"/><circle cx="110" cy="193" r="1.8" fill="#9C6B35"/><circle cx="126" cy="191" r="1.6" fill="#9C6B35"/>
+          <path d="M142 196 q6 -9 12 -2 q6 -9 12 0 q5 -7 9 1" stroke="#3FA572" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M144 186 q6 -6 12 0 q6 -5 12 1" stroke="#7CC48F" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M150 178 q6 -4 12 1" stroke="#E07B39" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <rect x="89" y="170" width="4" height="26" rx="2" fill="#ffffff" opacity=".7"/>
+          <!-- borde superior abierto -->
+          <rect x="81" y="157" width="104" height="8" rx="3.5" fill="#16804F"/>
+          <!-- vapor -->
+          <path d="M116 146 c-6 -10 6 -14 0 -24" stroke="#C9D1DD" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M150 142 c-6 -10 6 -14 0 -24" stroke="#C9D1DD" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- celular -->
+          <rect x="248" y="70" width="96" height="150" rx="16" fill="#152238"/>
+          <rect x="255" y="80" width="82" height="128" rx="10" fill="#21448E"/>
+          <rect x="268" y="96" width="56" height="56" rx="6" fill="#ffffff"/>
+          <g fill="#152238">
+            <rect x="273" y="101" width="14" height="14" rx="2"/><rect x="305" y="101" width="14" height="14" rx="2"/><rect x="273" y="133" width="14" height="14" rx="2"/>
+            <rect x="291" y="103" width="6" height="6"/><rect x="293" y="115" width="6" height="6"/><rect x="305" y="121" width="6" height="6"/><rect x="291" y="127" width="6" height="6"/>
+            <rect x="301" y="135" width="6" height="6"/><rect x="311" y="141" width="8" height="6"/><rect x="291" y="141" width="6" height="6"/><rect x="279" y="121" width="6" height="6"/>
+          </g>
+          <rect x="268" y="162" width="56" height="6" rx="3" fill="#ffffff" opacity=".85"/>
+          <rect x="276" y="174" width="40" height="5" rx="2.5" fill="#FFDF00"/>
+          <rect x="248" y="190" width="96" height="30" rx="0" fill="#152238" opacity="0"/>
+          <!-- check -->
+          <circle cx="342" cy="84" r="17" fill="#16804F" stroke="#ffffff" stroke-width="3"/>
+          <path d="M334 84 l6 6 l10 -12" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- etiqueta de descuento -->
+          <g transform="rotate(-10 222 92)">
+            <path d="M196 74 H244 L258 92 L244 110 H196 Q190 110 190 104 V80 Q190 74 196 74Z" fill="#FFDF00" stroke="#172F66" stroke-width="2.5"/>
+            <circle cx="245" cy="92" r="3.5" fill="#172F66"/>
+            <text x="216" y="99" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="19" fill="#172F66">−10%</text>
+          </g>
+        </svg>

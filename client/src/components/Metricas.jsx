@@ -51,7 +51,7 @@ export function GraficosHabitos({ m, umbral = 37 }) {
     <div className="rejilla rejilla-2" style={{ marginTop: '1rem' }}>
       <div className="panel">
         <div className="panel-titulo"><h3>Horas con más tuppers</h3><span className="pequeno texto-suave">Periodo seleccionado</span></div>
-        <Barras datos={m.porHora} x="hora" series={[{ clave: 'envases', nombre: 'Tuppers', color: COLORES.tapa }]} alto={220} />
+        <Barras datos={m.porHora} x="hora" series={[{ clave: 'envases', nombre: 'Tuppers', color: COLORES.sol }]} alto={220} />
       </div>
       <div className="panel">
         <div className="panel-titulo"><h3>Participantes según usos acumulados</h3></div>
@@ -82,13 +82,13 @@ export function ImpactoPeriodo({ m }) {
 export function Recientes({ m }) {
   return (
     <div className="panel">
-      <div className="panel-titulo"><h3>Últimos registros</h3><span className="pequeno texto-suave">Carnés anonimizados</span></div>
+      <div className="panel-titulo"><h3>Últimos registros</h3></div>
       <ul className="lista">
         {m.recientes.slice(0, 7).map((r) => (
           <li key={r.id}>
             <div>
               <div className="principal">{r.cliente}</div>
-              <div className="secundario">{fechaHora(r.fecha)}{r.cafeteria && m.porCafeteria.length > 1 ? `, ${r.cafeteria}` : ''}</div>
+              <div className="secundario">{r.carnet}, {fechaHora(r.fecha)}{r.cafeteria && m.porCafeteria.length > 1 ? `, ${r.cafeteria}` : ''}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
               {r.descuento > 0 ? <span className="chip chip-hoja">−{dinero(r.descuento)}</span> : <span className="chip">Sin descuento</span>}

@@ -17,6 +17,7 @@ const PanelAdmin = lazy(() => import('./pages/admin/Panel.jsx'));
 const Simulador = lazy(() => import('./pages/admin/Simulador.jsx'));
 const Cafeterias = lazy(() => import('./pages/admin/Cafeterias.jsx'));
 const Usuarios = lazy(() => import('./pages/admin/Usuarios.jsx'));
+const Parametros = lazy(() => import('./pages/admin/Parametros.jsx'));
 const Carne = lazy(() => import('./pages/cliente/Carne.jsx'));
 const Impacto = lazy(() => import('./pages/cliente/Impacto.jsx'));
 const Historial = lazy(() => import('./pages/cliente/Historial.jsx'));
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="/admin/simulador" element={<Simulador />} />
         <Route path="/admin/cafeterias" element={<Cafeterias />} />
         <Route path="/admin/usuarios" element={<Usuarios />} />
+        <Route path="/admin/parametros" element={<Parametros />} />
       </Route>
       <Route element={<Protegida roles={['cliente']} />}>
         <Route path="/cliente" element={<Carne />} />

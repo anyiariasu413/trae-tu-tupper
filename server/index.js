@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import bcrypt from 'bcryptjs';
 import { cargar, getDb, guardar, nuevoId, restaurar } from './db.js';
 import { firmarToken, publico, requiere, limitarLogin } from './auth.js';
-import { CONFIG, CO2E_POR_ENVASE, diaSV, sumarDias, redondear } from './config.js';
+import { CONFIG, CONFIG_DEFECTO, EDITABLES, aplicarConfig, co2ePorEnvase, diaSV, sumarDias, redondear } from './config.js';
 import { calcularDescuento, requiereMonto, validarRegla } from './reglas.js';
 import { metricasCafeterias, metricasCliente, impactoPublico } from './metricas.js';
 import { CREDENCIALES_DEMO } from './seed.js';
@@ -56,8 +56,8 @@ app.get('/api/public/impacto', (req, res) => res.json(impactoPublico(db())));
 app.get('/api/public/guia', (req, res) => res.json({
   credenciales: [
     { rol: 'Administrador', descripcion: 'Gestión global, métricas consolidadas y simulador', ...CREDENCIALES_DEMO.admin },
-    { rol: 'Dueña de cafetería', descripcion: 'Chalet Central: reglas de descuento y métricas', ...CREDENCIALES_DEMO.duena },
-    { rol: 'Empleado', descripcion: 'Chalet Central: registro de tuppers', ...CREDENCIALES_DEMO.empleado },
+    { rol: 'Dueña de cafetería', descripcion: "Cafetería D'Liss: reglas de descuento y métricas", ...CREDENCIALES_DEMO.duena },
+    { rol: 'Empleado', descripcion: "Cafetería D'Liss: registro de tuppers", ...CREDENCIALES_DEMO.empleado },
     { rol: 'Cliente (estudiante)', descripcion: 'Carné virtual e impacto personal', email: CREDENCIALES_DEMO.cliente.email, password: CREDENCIALES_DEMO.cliente.password, carnet: CREDENCIALES_DEMO.cliente.carnet },
   ],
 }));
@@ -66,7 +66,34 @@ app.get('/api/public/cafeterias', (req, res) => res.json(
   db().cafeterias.map((c) => ({ id: c.id, nombre: c.nombre, ubicacion: c.ubicacion, activa: c.activa, regla: c.regla })),
 ));
 
-app.get('/api/config', (req, res) => res.json({ ...CONFIG, CO2E_POR_ENVASE: redondear(CO2E_POR_ENVASE, 5) }));
+app.get('/api/config', (req, res) => res.json({ ...CONFIG, CO2E_POR_ENVASE: redondear(co2ePorEnvase(), 5), DEFECTO: CONFIG_DEFECTO, actualizadoEn: db().config?.actualizadoEn || null }));
+
+app.put('/api/config', requiere('admin'), (req, res) => {
+  const nuevos = { ...(db().config || {}) };
+  for (const [k, lim] of Object.entries(EDITABLES)) {
+    if (req.body?.[k] === undefined) continue;
+    const v = Number(req.body[k]);
+    if (!Number.isFinite(v) || v < lim.min || v > lim.max) {
+      return res.status(400).json({ error: `El valor de ${k} debe estar entre ${lim.min} y ${lim.max}.` });
+    }
+    nuevos[k] = v;
+  }
+  if (req.body?.fuentes && typeof req.body.fuentes === 'object') {
+    nuevos.FUENTES = { ...(nuevos.FUENTES || {}) };
+    for (const k of Object.keys(EDITABLES)) {
+      if (req.body.fuentes[k] === undefined) continue;
+      const t = String(req.body.fuentes[k]).trim().slice(0, 300);
+      if (t.length < 3) return res.status(400).json({ error: 'Escribe la fuente o justificación de cada parámetro.' });
+      nuevos.FUENTES[k] = t;
+    }
+  }
+  if (req.body?.restablecer) { for (const k of Object.keys(EDITABLES)) delete nuevos[k]; delete nuevos.FUENTES; }
+  nuevos.actualizadoEn = new Date().toISOString();
+  db().config = nuevos;
+  aplicarConfig(nuevos);
+  guardar();
+  res.json({ ...CONFIG, CO2E_POR_ENVASE: redondear(co2ePorEnvase(), 5), DEFECTO: CONFIG_DEFECTO, actualizadoEn: nuevos.actualizadoEn });
+});
 
 // ---------- autenticación ----------
 app.post('/api/auth/login', limitarLogin, (req, res) => {
@@ -86,17 +113,18 @@ app.post('/api/auth/login', limitarLogin, (req, res) => {
 });
 
 app.post('/api/auth/registro', limitarLogin, (req, res) => {
-  const { nombre = '', carnet = '', email = '', password = '', tipoCliente = 'estudiante' } = req.body || {};
+  const { nombre = '', carnet = '', email = '', password = '' } = req.body || {};
   const c = normalizarCarnet(carnet);
   const e = String(email).trim().toLowerCase();
   const n = String(nombre).trim().replace(/\s+/g, ' ');
   if (n.length < 5 || !n.includes(' ')) return res.status(400).json({ error: 'Escribe tu nombre y apellido.' });
-  if (!RE_CARNET.test(c)) return res.status(400).json({ error: 'El carné debe tener 2 letras y 6 números (ej. HM250117).' });
+  if (!RE_CARNET.test(c)) return res.status(400).json({ error: 'El carné debe tener 2 letras y 6 números (ej. AP250201).' });
   if (!RE_EMAIL_UDB.test(e)) return res.status(400).json({ error: 'Usa tu correo institucional (@udb.edu.sv o @alumno.udb.edu.sv).' });
-  if (!['estudiante', 'docente', 'administrativo'].includes(tipoCliente)) return res.status(400).json({ error: 'Tipo de usuario inválido.' });
   const errPass = validarPassword(password);
   if (errPass) return res.status(400).json({ error: errPass });
   if (db().usuarios.some((u) => u.carnet === c)) return res.status(409).json({ error: 'Ya existe una cuenta con ese carné.' });
+  // El registro público siempre crea clientes; el tipo se deduce del correo institucional
+  const tipoCliente = e.endsWith('@alumno.udb.edu.sv') ? 'estudiante' : 'personal UDB';
   if (db().usuarios.some((u) => u.email.toLowerCase() === e)) return res.status(409).json({ error: 'Ya existe una cuenta con ese correo.' });
 
   const u = {
@@ -171,7 +199,7 @@ app.post('/api/registros', requiere('empleado', 'duena'), (req, res) => {
     id: nuevoId('r'), clienteId: cliente.id, cafeteriaId: caf.id, empleadoId: req.usuario.id,
     fecha: new Date().toISOString(), monto, descuento: calc.descuento, total: calc.total,
     motivoSinDescuento: calc.motivo, tipoDescuento: caf.regla.tipo, valorDescuento: caf.regla.valor,
-    gramosEvitados: CONFIG.GRAMOS_POR_ENVASE, co2eKg: redondear(CO2E_POR_ENVASE, 5), numeroReutilizacion: numero,
+    gramosEvitados: CONFIG.GRAMOS_POR_ENVASE, co2eKg: redondear(co2ePorEnvase(), 5), numeroReutilizacion: numero,
   };
   db().registros.push(registro);
   guardar();
@@ -349,6 +377,57 @@ app.post('/api/usuarios', requiere('admin', 'duena'), (req, res) => {
   db().usuarios.push(u);
   guardar();
   res.status(201).json(publico(u));
+});
+
+app.put('/api/usuarios/:id', requiere('admin', 'duena'), (req, res) => {
+  const yo = req.usuario;
+  const u = db().usuarios.find((x) => x.id === req.params.id);
+  if (!u) return res.status(404).json({ error: 'Usuario no encontrado.' });
+  if (yo.rol === 'duena' && !(u.rol === 'empleado' && u.cafeteriaId === yo.cafeteriaId)) {
+    return res.status(403).json({ error: 'Solo puedes editar a los empleados de tu cafetería.' });
+  }
+  const b = req.body || {};
+  const cambios = {};
+
+  if (b.nombre !== undefined) {
+    const n = String(b.nombre).trim().replace(/\s+/g, ' ');
+    if (n.length < 5) return res.status(400).json({ error: 'Escribe el nombre completo.' });
+    cambios.nombre = n;
+  }
+  if (b.email !== undefined) {
+    const e = String(b.email).trim().toLowerCase();
+    if (!RE_EMAIL_UDB.test(e)) return res.status(400).json({ error: 'Usa un correo institucional @udb.edu.sv.' });
+    if (db().usuarios.some((x) => x.id !== u.id && x.email.toLowerCase() === e)) return res.status(409).json({ error: 'Ya existe un usuario con ese correo.' });
+    cambios.email = e;
+  }
+  if (b.carnet !== undefined && u.rol === 'cliente' && yo.rol === 'admin') {
+    const c = normalizarCarnet(b.carnet);
+    if (!RE_CARNET.test(c)) return res.status(400).json({ error: 'El carné debe tener 2 letras y 6 números.' });
+    if (db().usuarios.some((x) => x.id !== u.id && x.carnet === c)) return res.status(409).json({ error: 'Ya existe una cuenta con ese carné.' });
+    cambios.carnet = c;
+  }
+  if (yo.rol === 'admin' && u.rol !== 'cliente') {
+    if (b.rol !== undefined) {
+      if (!['admin', 'duena', 'empleado'].includes(b.rol)) return res.status(400).json({ error: 'Rol inválido.' });
+      if (u.id === yo.id && b.rol !== 'admin') return res.status(400).json({ error: 'No puedes quitarte el rol de administración.' });
+      cambios.rol = b.rol;
+    }
+    const rolFinal = cambios.rol || u.rol;
+    if (rolFinal === 'admin') cambios.cafeteriaId = null;
+    else {
+      const cid = b.cafeteriaId !== undefined ? b.cafeteriaId : u.cafeteriaId;
+      if (!db().cafeterias.some((c) => c.id === cid)) return res.status(400).json({ error: 'Selecciona una cafetería válida.' });
+      cambios.cafeteriaId = cid;
+    }
+  }
+  if (b.password) {
+    const err = validarPassword(b.password);
+    if (err) return res.status(400).json({ error: err });
+    cambios.passwordHash = bcrypt.hashSync(b.password, 10);
+  }
+  Object.assign(u, cambios);
+  guardar();
+  res.json(publico(u));
 });
 
 app.patch('/api/usuarios/:id/estado', requiere('admin', 'duena'), (req, res) => {

@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generarDatos } from './seed.js';
+import { aplicarConfig } from './config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
@@ -17,6 +18,7 @@ export function cargar() {
   if (fs.existsSync(DB_FILE)) {
     try {
       db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+      aplicarConfig(db.config);
       console.log(`[db] Cargado ${DB_FILE} (${db.registros.length} registros)`);
       return db;
     } catch (e) {
@@ -28,6 +30,7 @@ export function cargar() {
 
 export function restaurar() {
   db = generarDatos(new Date());
+  aplicarConfig(db.config);
   escribirAhora();
   console.log(`[db] Datos de demostración generados (${db.registros.length} registros)`);
   return db;

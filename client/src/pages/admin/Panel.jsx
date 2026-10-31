@@ -24,7 +24,7 @@ export default function PanelAdmin() {
   if (error) return <Error mensaje={error} reintentar={recargar} />;
   if (!m) return <Cargando texto="Calculando métricas de las cafeterías…" />;
   const a = m.adopcion;
-  const comparativa = m.porCafeteria.map((c) => ({ nombre: c.nombre.replace('Chalet ', ''), 'Con tupper (%)': c.periodo.pctConTupper }));
+  const comparativa = m.porCafeteria.map((c) => ({ nombre: c.nombre.replace(/^Cafetería\s+(?=\S)/, ''), 'Con tupper (%)': c.periodo.pctConTupper }));
 
   return (
     <>

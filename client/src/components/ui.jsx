@@ -140,18 +140,22 @@ const ICONOS = {
   hoja: <><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z" /><path d="M5 19l7-7" /></>,
   reloj: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
   salir: <><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" /><path d="M10 17l5-5-5-5M15 12H3" /></>,
-  check: <><path d="M5 12.5l4.5 4.5L19 7.5" /></>,
+    etiqueta: <><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z" /><circle cx="7.5" cy="7.5" r="1.5" /></>,
 };
 export function Icono({ nombre, tamano = 22 }) {
   return <svg width={tamano} height={tamano} viewBox="0 0 24 24" {...P} aria-hidden="true">{ICONOS[nombre]}</svg>;
 }
 
-export function Logo() {
+export function Logo({ tamano = 34 }) {
   return (
-    <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true">
-      <rect x="6" y="16" width="52" height="11" rx="4" fill="#2350C8" />
-      <path d="M10 28h44l-4 25a4 4 0 0 1-4 3.4H18A4 4 0 0 1 14 53z" fill="#16804F" />
-      <path d="M24 38c4-5 12-5 16 0" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" />
+    <svg width={tamano} height={tamano} viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 24V15" stroke="#21448E" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M32 16C32 10 37 6.5 44 6.5C44 12.5 39 16 32 16Z" fill="#FFDF00" stroke="#21448E" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M32 18.5C32 13.5 27.5 10.5 21.5 10.5C21.5 15.5 26 18.5 32 18.5Z" fill="#FFDF00" stroke="#21448E" strokeWidth="2" strokeLinejoin="round" />
+      <rect x="4.5" y="25.5" width="5" height="9" rx="2" fill="#172F66" />
+      <rect x="54.5" y="25.5" width="5" height="9" rx="2" fill="#172F66" />
+      <rect x="7" y="23" width="50" height="9" rx="3.5" fill="#21448E" />
+      <path d="M10.5 33H53.5L50.6 53.2Q50.1 57 46.3 57H17.7Q13.9 57 13.4 53.2Z" fill="#21448E" />
     </svg>
   );
 }

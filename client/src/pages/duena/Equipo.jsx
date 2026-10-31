@@ -8,6 +8,7 @@ export default function Equipo() {
   const { cafeteria } = useAuth();
   const { datos, error, recargar } = useDatos('/usuarios?rol=empleado');
   const [creando, setCreando] = useState(false);
+  const [editando, setEditando] = useState(null);
   const [toast, avisar] = useToast();
 
   const cambiarEstado = async (u, activo) => {
@@ -35,7 +36,10 @@ export default function Equipo() {
             {datos.usuarios.map((u) => (
               <li key={u.id}>
                 <div><div className="principal">{u.nombre}</div><div className="secundario">{u.email}</div></div>
-                <Interruptor checked={u.activo} onChange={(v) => cambiarEstado(u, v)}><span className="pequeno">{u.activo ? 'Activo' : 'Inactivo'}</span></Interruptor>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <button className="btn btn-texto" onClick={() => setEditando(u)}>Editar</button>
+                  <Interruptor checked={u.activo} onChange={(v) => cambiarEstado(u, v)}><span className="pequeno">{u.activo ? 'Activo' : 'Inactivo'}</span></Interruptor>
+                </div>
               </li>
             ))}
           </ul>
@@ -44,6 +48,10 @@ export default function Equipo() {
       {creando && (
         <FormUsuario rolFijo="empleado" onCerrar={() => setCreando(false)}
           onCreado={(u) => { setCreando(false); avisar(`${u.nombre} ya puede iniciar sesión`); recargar(); }} />
+      )}
+      {editando && (
+        <FormUsuario rolFijo="empleado" inicial={editando} onCerrar={() => setEditando(null)}
+          onGuardado={(u) => { setEditando(null); avisar(`Cambios de ${u.nombre} guardados`); recargar(); }} />
       )}
       {toast}
     </div>

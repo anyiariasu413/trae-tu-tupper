@@ -27,6 +27,7 @@ export default function Carne() {
         <div className="carne-qr">
           <QRCodeSVG value={`UDB-TUPPER:${usuario.carnet}`} size={196} level="M" fgColor="#152238" title={`Código QR del carné ${usuario.carnet}`} />
         </div>
+        <div className="carne-frase">Mi tupper, mi compromiso</div>
         <div className="carne-nombre">{usuario.nombre}</div>
         <div className="carne-numero">{usuario.carnet}</div>
       </div>

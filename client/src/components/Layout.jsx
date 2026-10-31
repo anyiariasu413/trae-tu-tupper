@@ -21,6 +21,7 @@ const MENUS = {
     { a: '/admin/simulador', texto: 'Proyección', icono: 'simulador' },
     { a: '/admin/cafeterias', texto: 'Cafeterías', icono: 'tienda' },
     { a: '/admin/usuarios', texto: 'Usuarios', icono: 'usuarios' },
+    { a: '/admin/parametros', texto: 'Parámetros', icono: 'hoja' },
   ],
   cliente: [
     { a: '/cliente', texto: 'Mi carné', icono: 'carne', fin: true },

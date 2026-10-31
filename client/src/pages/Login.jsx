@@ -33,7 +33,7 @@ export default function Login() {
   return (
     <div className="auth">
       <div className="auth-caja">
-        <Link to="/" className="marca"><Logo /><div><strong>Trae tu Tupper</strong><span>Universidad Don Bosco</span></div></Link>
+        <Link to="/" className="marca"><Logo tamano={56} /><div><strong>Trae tu Tupper</strong><span>Universidad Don Bosco</span></div></Link>
         <form className="panel" onSubmit={enviar} noValidate>
           <h1 style={{ fontSize: '1.5rem' }}>Iniciar sesión</h1>
           <p className="texto-suave pequeno">Estudiantes, docentes y personal de cafeterías.</p>
@@ -49,7 +49,7 @@ export default function Login() {
           <button className="btn btn-bloque" disabled={enviando || !id || !pass}>{enviando ? 'Verificando…' : 'Iniciar sesión'}</button>
           <p className="pequeno texto-suave" style={{ marginTop: '1rem', marginBottom: 0 }}>
             ¿Aún no tienes cuenta? <Link to="/registro">Crea tu cuenta con tu carné</Link>.<br />
-            ¿Vienes a evaluar? Las cuentas de prueba están en la <a href="/#guia">guía de evaluación</a>.
+            ¿Vienes a probar la aplicación? Las cuentas de prueba están en la <a href="/#guia">guía para probarla</a>..
           </p>
         </form>
       </div>

@@ -1,5 +1,6 @@
-// Constantes del sistema. Cambiarlas aquí actualiza todos los cálculos.
-export const CONFIG = {
+// Constantes del sistema. Los valores de impacto se pueden editar desde el panel
+// de administración; aquí quedan los valores por defecto.
+export const CONFIG_DEFECTO = {
   // Peso promedio de un envase de poliestireno (estado del arte del proyecto)
   GRAMOS_POR_ENVASE: 15.5,
   // Factor de emisión: kg CO2e por gramo de poliestireno
@@ -12,9 +13,32 @@ export const CONFIG = {
   UMBRAL_CARBONO_USOS: 27,
   MONEDA: 'USD',
   ZONA_HORARIA: 'America/El_Salvador',
+  // Fuente o justificación de cada parámetro editable
+  FUENTES: {
+    GRAMOS_POR_ENVASE: 'Estimación del equipo del proyecto. Pendiente de verificar pesando envases de los chalets.',
+    CO2E_KG_POR_GRAMO: 'Estimación del equipo del proyecto. Pendiente de cita bibliográfica.',
+    POBLACION_OBJETIVO: 'Dato aproximado de la población del campus Soyapango de la UDB.',
+  },
 };
 
-export const CO2E_POR_ENVASE = CONFIG.GRAMOS_POR_ENVASE * CONFIG.CO2E_KG_POR_GRAMO;
+/** Configuración vigente (por defecto + cambios guardados por la administración) */
+export const CONFIG = { ...CONFIG_DEFECTO };
+
+/** Parámetros que la administración puede editar, con sus límites */
+export const EDITABLES = {
+  GRAMOS_POR_ENVASE: { min: 1, max: 100 },
+  CO2E_KG_POR_GRAMO: { min: 0.0001, max: 0.05 },
+  POBLACION_OBJETIVO: { min: 100, max: 100000 },
+};
+
+export function aplicarConfig(cambios = {}) {
+  for (const k of Object.keys(CONFIG)) delete CONFIG[k];
+  Object.assign(CONFIG, CONFIG_DEFECTO);
+  for (const k of Object.keys(EDITABLES)) if (cambios[k] != null) CONFIG[k] = Number(cambios[k]);
+  CONFIG.FUENTES = { ...CONFIG_DEFECTO.FUENTES, ...(cambios.FUENTES || {}) };
+}
+
+export const co2ePorEnvase = () => CONFIG.GRAMOS_POR_ENVASE * CONFIG.CO2E_KG_POR_GRAMO;
 
 // El Salvador usa UTC-6 todo el año (sin horario de verano)
 const OFFSET_MS = -6 * 3600 * 1000;

@@ -49,8 +49,6 @@ export const RUTA_INICIO = { admin: '/admin', duena: '/duena', empleado: '/emple
 
 /** Datos de concientización, tomados de la revisión del estado del arte del proyecto */
 export const DATOS = [
-  { texto: 'En la Universidad de El Salvador, el 95.5 % de 1,278 estudiantes reconoce la contaminación por plásticos como un problema, pero el 83.6 % los sigue usando con frecuencia.', fuente: 'Universidad de El Salvador (2026)' },
-  { texto: 'En ese mismo estudio, el 86 % de los estudiantes dijo estar dispuesto a llevar su propio recipiente a los cafetines.', fuente: 'Universidad de El Salvador (2026)' },
   { texto: 'Un recipiente reutilizable necesita alrededor de 37 usos para superar al desechable en varias categorías de impacto ambiental.', fuente: 'Snyder y Park (2024)' },
   { texto: 'Un sistema reutilizable estudiado en China compensó su huella de carbono a partir de unos 27 usos y redujo cerca de 24 % las emisiones por pedido.', fuente: 'Huang et al. (2026)' },
   { texto: 'El programa TecFood2Go del Tecnológico de Monterrey había evitado 17,710 recipientes desechables para junio de 2024.', fuente: 'Irais (2024)' },

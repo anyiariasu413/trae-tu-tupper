@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+          <circle cx="200" cy="150" r="96" fill="none" stroke="#C9D1DD" stroke-width="3" stroke-dasharray="7 8"/>
+          <g fill="#21448E">
+            <path d="M-7 -7 L8 0 L-7 7Z" transform="translate(268 82) rotate(45)"/>
+            <path d="M-7 -7 L8 0 L-7 7Z" transform="translate(268 218) rotate(135)"/>
+            <path d="M-7 -7 L8 0 L-7 7Z" transform="translate(132 218) rotate(225)"/>
+            <path d="M-7 -7 L8 0 L-7 7Z" transform="translate(132 82) rotate(315)"/>
+          </g>
+          <!-- centro -->
+          <circle cx="200" cy="150" r="46" fill="#FFF7CC"/>
+          <path d="M200 152 V136" stroke="#16804F" stroke-width="3" stroke-linecap="round"/>
+          <path d="M200 138 C200 128 208 122 220 122 C220 132 212 138 200 138Z" fill="#3FA572"/>
+          <path d="M200 142 C200 134 193 129 183 129 C183 137 190 142 200 142Z" fill="#16804F"/>
+          <rect x="176" y="152" width="48" height="8" rx="3" fill="#21448E"/>
+          <path d="M179 161 H221 L218 176 Q217 179 214 179 H186 Q183 179 182 176 Z" fill="#21448E"/>
+          <!-- 1 llenar (arriba) -->
+          <circle cx="200" cy="54" r="34" fill="#ffffff" stroke="#D5DBE5" stroke-width="2"/>
+          <rect x="181" y="44" width="38" height="6" rx="3" fill="#21448E"/>
+          <path d="M183 51 H217 L214 66 Q213 69 210 69 H190 Q187 69 186 66 Z" fill="#16804F"/>
+          <ellipse cx="193" cy="44" rx="9" ry="4" fill="#E8C48A"/><ellipse cx="207" cy="43" rx="9" ry="4" fill="#DDB273"/>
+          <!-- 2 escanear (derecha) -->
+          <circle cx="296" cy="150" r="34" fill="#ffffff" stroke="#D5DBE5" stroke-width="2"/>
+          <rect x="283" y="128" width="26" height="44" rx="5" fill="#152238"/>
+          <rect x="287" y="136" width="18" height="18" rx="2" fill="#ffffff"/>
+          <g fill="#152238"><rect x="289" y="138" width="5" height="5"/><rect x="298" y="138" width="5" height="5"/><rect x="289" y="147" width="5" height="5"/><rect x="297" y="146" width="3" height="3"/><rect x="300" y="149" width="3" height="3"/></g>
+          <rect x="289" y="158" width="14" height="3" rx="1.5" fill="#FFDF00"/>
+          <!-- 3 comer y lavar (abajo) -->
+          <circle cx="200" cy="246" r="34" fill="#ffffff" stroke="#D5DBE5" stroke-width="2"/>
+          <path d="M183 244 H217 L214 259 Q213 262 210 262 H190 Q187 262 186 259 Z" fill="#21448E"/>
+          <path d="M193 226 q-4 6 0 9 q4 -3 0 -9Z" fill="#5B9BD5"/><path d="M206 222 q-4 6 0 9 q4 -3 0 -9Z" fill="#5B9BD5"/><path d="M199 234 q-3 5 0 7 q3 -2 0 -7Z" fill="#5B9BD5"/>
+          <circle cx="210" cy="240" r="4" fill="none" stroke="#5B9BD5" stroke-width="1.5"/><circle cx="188" cy="238" r="3" fill="none" stroke="#5B9BD5" stroke-width="1.5"/>
+          <!-- 4 volver (izquierda) -->
+          <circle cx="104" cy="150" r="34" fill="#ffffff" stroke="#D5DBE5" stroke-width="2"/>
+          <path d="M86 150 a18 18 0 1 1 6 13" stroke="#16804F" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M84 162 l9 3 l-1 -10 Z" fill="#16804F"/>
+          <text x="104" y="156" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="#172F66">+1</text>
+          <!-- etiquetas -->
+          <g font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#152238">
+            <text x="246" y="34">Llenar en el chalet</text>
+            <text x="334" y="196" text-anchor="middle">Escanear</text>
+            <text x="246" y="276">Comer y lavar</text>
+            <text x="66" y="196" text-anchor="middle">Volver a usar</text>
+          </g>
+        </svg>
